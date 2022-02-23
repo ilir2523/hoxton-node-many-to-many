@@ -62,6 +62,18 @@ app.get('/interviewers', (req, res) => {
   res.send(interviewers)
 })
 
+app.get('/interviewers/:id', (req, res) => {
+  const id = req.params.id
+
+  const interviewer = getInterviewerById.get(id)
+
+  if (interviewer) {
+    const applicants = getApplicantsForInterviewer.all(interviewer.id)
+    interviewer.applicants = applicants
+    res.send(interviewer)
+  } else res.status(404).send({error: `applicant not found.`})
+})
+
 app.post('/interviewers', (req, res) => {
   const {name, email} = req.body
   const errors = []
@@ -84,6 +96,18 @@ app.get('/applicants', (req, res) => {
     applicant.interviewers = interviewers
   }
   res.send(applicants)
+})
+
+app.get('/applicants/:id', (req, res) => {
+  const id = req.params.id
+
+  const applicant = getApplicantById.get(id)
+
+  if (applicant) {
+    const applicants = getInterviewersForApplicant.all(applicant.id)
+    applicant.applicants = applicants
+    res.send(applicant)
+  } else res.status(404).send({error: `applicant not found.`})
 })
 
 app.post('/applicants', (req, res) => {
